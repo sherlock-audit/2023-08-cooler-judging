@@ -3,7 +3,7 @@
 Source: https://github.com/sherlock-audit/2023-08-cooler-judging/issues/28 
 
 ## Found by 
-detectiveking, jkoppel
+detectiveking, jkoppel, mert\_eren
 
 `Clearinghouse.claimDefaulted` assumes that all loans passed in were originated by the Clearinghouse. However, nothing guarantees that. An attacker can wreak havoc by calling it with a mixture of Clearinghouse-originated and external loans. In particular, they can inflate the computed `totalCollateral` recovered to steal excess gOhm from defaulted loans.
 
@@ -87,6 +87,28 @@ Manual Review
 
 Check that the Clearinghouse is the originator of all loans passed to claimDefaulted
 
+
+
+## Discussion
+
+**0xRusowsky**
+
+- https://github.com/ohmzeus/Cooler/pull/48
+
+**jkoppel**
+
+Note on this:
+
+The link to #3 is meant to be a link to #46
+
+The link to #5 is meant to be a link to #115
+
+In the past, when I linked to issues in my private judging repository, Sherlock would properly update them upon submission. Now it just links them to whatever issue in the public judging repo has the same number.
+
+**jkoppel**
+
+Fix confirmed.
+
 # Issue H-2: At claimDefaulted, the lender may not receive the token because the Unclaimed token is not processed 
 
 Source: https://github.com/sherlock-audit/2023-08-cooler-judging/issues/119 
@@ -129,6 +151,19 @@ function claimDefaulted(uint256 loanID_) external returns (uint256, uint256, uin
     delete loans[loanID_];
 ```
 
+
+
+## Discussion
+
+**0xRusowsky**
+
+- fix: https://github.com/ohmzeus/Cooler/pull/54
+- https://github.com/ohmzeus/Cooler/pull/47
+
+**jkoppel**
+
+Fix approved.
+
 # Issue H-3: Clearinghouse.sol#claimDefaulted() 
 
 Source: https://github.com/sherlock-audit/2023-08-cooler-judging/issues/176 
@@ -169,6 +204,14 @@ Defaults could still happen via the Cooler contracts and OHM could be burned ad-
 **0xRusowsky**
 
 After discussing it internally, we don't mind if it's labeled as high or medium cause we would need to deploy a new policy (so it would require some extra work on our end)
+
+**0xRusowsky**
+
+- https://github.com/ohmzeus/Cooler/pull/52
+
+**jkoppel**
+
+Fix approved.
 
 # Issue H-4: isCoolerCallback can be bypassed 
 
@@ -326,6 +369,11 @@ Duplicate of 30
 
 Reorder issues
 
+**0xRusowsky**
+
+- https://github.com/ohmzeus/Cooler/pull/51
+- https://github.com/ohmzeus/Cooler/pull/57
+
 # Issue M-1: `emergency_shutdown` role is not enough for emergency shutdown. 
 
 Source: https://github.com/sherlock-audit/2023-08-cooler-judging/issues/1 
@@ -425,12 +473,20 @@ fair point, but it still should be low as a user can have several roles
 I have to disagree, a user can indeed have several roles, but that can not be ensured/ if there are two separate roles they should be considered separate. 
 
 
+**ohmzeus**
+
+Fix: https://github.com/ohmzeus/Cooler/pull/50
+
+**jkoppel**
+
+Fix confirmed.
+
 # Issue M-2: Lender is able to steal borrowers collateral by calling rollLoan  with unfavourable terms on behalf of the borrower. 
 
 Source: https://github.com/sherlock-audit/2023-08-cooler-judging/issues/26 
 
 ## Found by 
-0xMosh, 0xbepresent, 0xmurali7, ADM, B353N, Breeje, BugHunter101, Chinmay, Delvir0, HChang26, Kow, Kral01, Mlome, SBSecurity, SanketKogekar, Silvermist, Yanev, banditx0x, carrotsmuggler, castle\_chain, cats, deadrxsezzz, detectiveking, deth, evilakela, hals, harisnabeel, james\_wu, jovi, libratus, mahdikarimi, ni8mare, nmirchev8, p-tsanev, pengun, pep7siup, radevauditor, sandy, tvdung94, ubl4nk
+0xMosh, 0xbepresent, 0xmurali7, ADM, B353N, Breeje, BugHunter101, Chinmay, Delvir0, HChang26, Kow, Kral01, Mlome, SBSecurity, SanketKogekar, Silvermist, Yanev, banditx0x, carrotsmuggler, castle\_chain, cats, deadrxsezzz, detectiveking, deth, evilakela, hals, jovi, libratus, mahdikarimi, ni8mare, nmirchev8, p-tsanev, pengun, sandy, tvdung94
 A Lender is able to call provideNewTermsForRoll with whatever terms they want and then can call rollLoan on behalf of the borrower forcing them to roll the loan with the terms they provided. They can abuse this to make the loan so unfavourable for the borrower to repay that they must forfeit their collateral to the lender.
 
 ## Vulnerability Detail
@@ -506,12 +562,75 @@ Whether this is medium or high depends on how likely borrowers are to make massi
 
 imo a Medium
 
+**Oot2k**
+
+escalate
+split frontrunning and access control into own issues
+
+**sherlock-admin2**
+
+ > escalate
+> split frontrunning and access control into own issues
+
+You've created a valid escalation!
+
+To remove the escalation from consideration: Delete your comment.
+
+You may delete or edit your escalation comment anytime before the 48-hour escalation window closes. After that, the escalation becomes final.
+
+**0xRusowsky**
+
+- fix: https://github.com/ohmzeus/Cooler/pull/54
+- https://github.com/ohmzeus/Cooler/pull/60
+- https://github.com/ohmzeus/Cooler/pull/61
+
+**Oot2k**
+
+Following issues are not duplicates of 26 and should be grouped together and treaded as another issue:
+16 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/16)
+18 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/18)
+72 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/72)
+99 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/99)
+130 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/130)
+137 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/137)
+150 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/150)
+204 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/204)
+221 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/221)
+243 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/243)
+271 (https://github.com/sherlock-audit/2023-08-cooler-judging/issues/271)
+
+226 -> Invalid
+
+**Oot2k**
+
+Addition:
+226 shows attack path and root cause, mentions tokens that are not supported -> sherlock has to decide if valid/invalid 
+231 is not duplicate of this issue and should be grouped with the other ones mentioned above
+
+**hrishibhat**
+
+Result:
+Medium
+Has duplicates
+The respective set of issues has been separated
+
+**sherlock-admin2**
+
+Escalations have been resolved successfully!
+
+Escalation status:
+- [Oot2k](https://github.com/sherlock-audit/2023-08-cooler-judging/issues/26/#issuecomment-1717154911): accepted
+
+**jkoppel**
+
+Fix confirmed. Sponsor agreed to accept some economic concerns with the fix, but no security concerns were identified.
+
 # Issue M-3: gOhm stuck forever if call claimDefaulted on Cooler directly 
 
 Source: https://github.com/sherlock-audit/2023-08-cooler-judging/issues/46 
 
 ## Found by 
-castle\_chain, evilakela, jkoppel
+castle\_chain, detectiveking, evilakela, jkoppel
 
 Anyone can call Cooler.claimDefaulted. If this is done for a loan owned by the Clearinghouse, the gOhm is sent to the Clearinghouse, but there is no way to recover or burn it.
 
@@ -573,4 +692,61 @@ On top of that, there is an economical incentive to call it from the CH, as the 
 Disagree with severity, imo at max it should be a medium.
 
 Will think about how to deal with it.
+
+**0xRusowsky**
+
+we will finally add a permissionless `burn` function despite this logic is unlikely to happen
+
+**0xRusowsky**
+
+- https://github.com/ohmzeus/Cooler/pull/57
+
+**jkoppel**
+
+Fix approved.
+
+# Issue M-4: Lender can front-run `rollLoan` and call `provideNewTermsForRoll` with unfavorable terms 
+
+Source: https://github.com/sherlock-audit/2023-08-cooler-judging/issues/243 
+
+## Found by 
+0xbepresent, Breeje, banditx0x, cats, deadrxsezzz, detectiveking, evilakela, harisnabeel, james\_wu, pep7siup, radevauditor, sandy, ubl4nk
+Lender can front-run `rollLoan` and result in borrower accepting unfavorable terms.
+
+## Vulnerability Detail
+After a loan is created, the lender can provide new loan terms via `provideNewTermsForRoll`. If they are reasonable, the user can then accept them. However this opens up a risky scenario: 
+1. User A borrows from lender B 
+2. Lender B proposes new suitable terms 
+3. User A sees them and calls `rollLoan` to accept them
+4. Lender B is waiting for this and sees the pending transaction in the mempool
+5. Lender B front-runs user A's transaction and makes a new call to `provideNewTermsForRoll` will an extremely high interest rate
+6. User A's transaction now executes and they've accepted unfavorable terms with extremely high interest rate
+
+## Impact
+User may get mislead in to accepting unfavorable terms and overpaying interest 
+
+## Code Snippet
+https://github.com/sherlock-audit/2023-08-cooler/blob/main/Cooler/src/Cooler.sol#L192
+https://github.com/sherlock-audit/2023-08-cooler/blob/main/Cooler/src/Cooler.sol#L282
+
+## Tool used
+
+Manual Review
+
+## Recommendation
+When calling `rollLoan` let the user pass a parameter consisting of the max interest rate they are willing to accept to prevent from such incidents.
+
+
+
+
+
+## Discussion
+
+**0xRusowsky**
+
+- https://github.com/ohmzeus/Cooler/pull/63
+
+**jkoppel**
+
+This is moot because rollLoan no longer exists.
 
